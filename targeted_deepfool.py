@@ -77,4 +77,4 @@ def targeted_deepfool(image, net, target_class, overshoot=0.02, max_iter=50):
         i += 1
 
     # torchvision.utils.save_image(perturbed_image, 'backdoored.png')
-    return v_total, perturbed_image
+    return v_total, i, perturbed_image
