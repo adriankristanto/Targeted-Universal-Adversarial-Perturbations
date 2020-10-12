@@ -30,10 +30,12 @@ def targeted_deepfool(image, net, target_class, overshoot=0.02, max_iter=50):
     v_total = np.zeros(image.shape)
 
     # obtain the prediction on the clean image and the target
+    # this will be used for gradient computation
     x = perturbed_image[None, :, :, :].requires_grad_(True)
     outputs = net(x)
     current_prediction = clean_label
 
+    # for progress bar
     wrapped = tqdm(total=max_iter)
 
     i = 0
@@ -56,6 +58,7 @@ def targeted_deepfool(image, net, target_class, overshoot=0.02, max_iter=50):
 
         perturbation = abs(f) / np.linalg.norm(w.flatten())
 
+        # update description and progress bar
         wrapped.set_description(f"perturbation: {perturbation:.5f}")
         wrapped.update(1)
 
@@ -66,6 +69,7 @@ def targeted_deepfool(image, net, target_class, overshoot=0.02, max_iter=50):
 
         perturbed_image = image + (1+overshoot) * torch.from_numpy(v_total).to(device)
 
+        # for the next gradient computation
         x = perturbed_image.requires_grad_(True)
         outputs = net(x)
         current_prediction = np.argmax(outputs.data.cpu().numpy().flatten())
