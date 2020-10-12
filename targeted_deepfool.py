@@ -35,7 +35,7 @@ def targeted_deepfool(image, net, target_class, overshoot=0.02, max_iter=50):
     outputs = net(x)
     current_prediction = clean_label
 
-    wrapped = tqdm(range(max_iter))
+    wrapped = tqdm(total=max_iter)
 
     i = 0
 
@@ -58,6 +58,7 @@ def targeted_deepfool(image, net, target_class, overshoot=0.02, max_iter=50):
         perturbation = abs(f) / np.linalg.norm(w.flatten())
 
         wrapped.set_description(f"perturbation: {perturbation:.5f}")
+        wrapped.update(1)
 
         # compute vi
         vi = (perturbation+1e-4) * w / np.linalg.norm(w)
