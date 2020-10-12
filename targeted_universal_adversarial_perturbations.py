@@ -17,7 +17,9 @@ def proj_lp(v, xi=10, p=np.inf):
     return v
 
 def targeted_universal_adversarial_perturbations(images, net, target_class, max_iter, xi=10, p=np.inf, overshoot=0.02, max_iter_deepfool=50):
-    universal_v = torch.zeros(images[0][None, :, :, :].shape, requires_grad=True)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+    universal_v = torch.zeros(images[0][None, :, :, :].shape)
 
     num_images = len(images)
     image_indices = np.arange(num_images)
@@ -25,7 +27,7 @@ def targeted_universal_adversarial_perturbations(images, net, target_class, max_
     i = 0
 
     while i < max_iter: 
-        print(f"Iteration {i+1}/{max_iter}")
+        print(f"Iteration {i+1}/{max_iter}\n")
         i += 1
 
         # shuffle the dataset
@@ -35,15 +37,15 @@ def targeted_universal_adversarial_perturbations(images, net, target_class, max_
         for index in image_indices:
             image = images[index]
             # forward propagation
-            outputs = net(images[None, :, :, :] + universal_v)
+            outputs = net(image[None, :, :, :] + universal_v)
             # if the prediction doesn't equal to the target class
             if torch.argmax(outputs) != target_class:
                 # 1. compute the minimal perturbation
-                v_total, i_deepfool, perturbed_image = targeted_deepfool(image + universal_v.squeeze(0), net, target_class, overshoot, max_iter_deepfool)
+                v_total, i_deepfool, perturbed_image = targeted_deepfool(image + universal_v[0].detach(), net, target_class, overshoot, max_iter_deepfool)
                 # 2. update the perturbation using the projection function
                 # make sure it converges
                 if i_deepfool < max_iter_deepfool-1:
-                    universal_v = universal_v + v_total
+                    universal_v = universal_v + torch.from_numpy(v_total).to(device)
                     universal_v = proj_lp(universal_v, xi, p)
     
     return universal_v
