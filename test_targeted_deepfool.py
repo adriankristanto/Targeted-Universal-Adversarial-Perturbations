@@ -46,3 +46,7 @@ def test_2():
 def test_3():
     v_total, perturbed_image = targeted_deepfool(image=im, net=net, target_class=100)
     assert torch.argmax(net(perturbed_image)) == 100
+
+def test_4():
+    v_total, perturbed_image = targeted_deepfool(image=im, net=net, target_class=31)
+    assert torch.argmax(net(perturbed_image)) == 31
