@@ -3,9 +3,8 @@ import torch
 import copy
 from torch.autograd.gradcheck import zero_gradients
 import numpy as np
-import torchvision
+# import torchvision
 from tqdm import tqdm
-from torch.autograd import Variable
 
 def targeted_deepfool(image, net, target_class, overshoot=0.02, max_iter=50):
     """
