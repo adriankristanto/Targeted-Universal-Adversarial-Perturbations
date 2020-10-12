@@ -36,17 +36,17 @@ im = transforms.Compose([
                          std = std)])(im_orig)
 
 def test_1():
-    v_total, perturbed_image = targeted_deepfool(image=im, net=net, target_class=130)
+    v_total, i, perturbed_image = targeted_deepfool(image=im, net=net, target_class=130)
     assert torch.argmax(net(perturbed_image)) == 130
 
 def test_2():
-    v_total, perturbed_image = targeted_deepfool(image=im, net=net, target_class=1)
+    v_total, i, perturbed_image = targeted_deepfool(image=im, net=net, target_class=1)
     assert torch.argmax(net(perturbed_image)) == 1
 
 def test_3():
-    v_total, perturbed_image = targeted_deepfool(image=im, net=net, target_class=100)
+    v_total, i, perturbed_image = targeted_deepfool(image=im, net=net, target_class=100)
     assert torch.argmax(net(perturbed_image)) == 100
 
 def test_4():
-    v_total, perturbed_image = targeted_deepfool(image=im, net=net, target_class=31)
+    v_total, i, perturbed_image = targeted_deepfool(image=im, net=net, target_class=31)
     assert torch.argmax(net(perturbed_image)) == 31
