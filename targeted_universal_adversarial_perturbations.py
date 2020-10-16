@@ -38,6 +38,7 @@ def targeted_universal_adversarial_perturbations(images, net, target_class, max_
             image = images[index]
             # forward propagation
             outputs = net(image[None, :, :, :] + universal_v)
+            # print(torch.argmax(outputs))
             # if the prediction doesn't equal to the target class
             if torch.argmax(outputs) != target_class:
                 # 1. compute the minimal perturbation
